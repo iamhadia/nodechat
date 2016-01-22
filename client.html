@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+			//add name to chat
+			var username;
+
+			function saveName() {
+				username = document.getElementById('username').value;
+			}
+
+            // our socket.io code goes here
+            var socketio = io.connect("127.0.0.1:1337");
+            socketio.on("message_to_client", function(data) {
+            	document.getElementById("chatlog").innerHTML = ("<hr/>" +
+            		data['message'] + document.getElementById("chatlog").innerHTML);
+            });
+
+            function sendMessage() {
+            	if (username != undefined) {
+            		var msg = username + ": " + document.getElementById("message_input").value;
+            		socketio.emit("message_to_server", { message : msg});
+            		var escaped_message = sanitize(data["message"]).escape();
+            		io.sockets.emit("message_to_client",{ message: escaped_message });
+    } else {
+    	alert("set a username first");
+    }
+}
+</script>
+<title>node chat</title>
+</head>
+<body>
+	<input type="text" id="message_input"/>
+	<button onclick="sendMessage()">send</button>
+	<div id="chatlog"></div>
+	<br>
+	<input type="text" placeholder="username" id="username">
+	<button onclick="saveName()">set name</button>
+</body>
+</html>
